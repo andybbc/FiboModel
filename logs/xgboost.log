@@ -1,0 +1,25 @@
+2021-12-22 15:35:01,965 [D:/workspace_python/python-ctr-model/src/tests/xgboost/train/test_train.py:47][train][test_train][INFO] 
+        ##################################
+        ##### XGBoost_LR Train START #####
+        ##################################
+    
+2021-12-22 15:38:58,371 [D:/workspace_python/python-ctr-model/src/tests/xgboost/train/test_train.py:47][train][test_train][INFO] 
+        ##################################
+        ##### XGBoost_LR Train START #####
+        ##################################
+    
+2021-12-22 15:44:26,228 [D:/workspace_python/python-ctr-model/src/tests/xgboost/train/test_train.py:56][train][test_train][INFO] 
+        #################################
+        ##### XGBoost_RL Train DONE #####
+        #################################
+    
+2021-12-22 16:39:05,747 [D:/workspace_python/python-ctr-model/src/tests/xgboost/train/test_train.py:48][train][test_train][INFO] 
+        ##################################
+        ##### XGBoost_LR Train START #####
+        ##################################
+    
+2021-12-22 16:39:30,986 [D:/workspace_python/python-ctr-model/src/tests/xgboost/train/test_train.py:57][train][test_train][INFO] 
+        #################################
+        ##### XGBoost_RL Train DONE #####
+        #################################
+    

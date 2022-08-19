@@ -1,0 +1,6 @@
+com/vlion/io/IOFactory.class
+com/vlion/io/hdfs/HdfsTextWriter.class
+com/vlion/io/hdfs/AbstractHDFSWriter.class
+com/vlion/util/HdfsUtil.class
+com/vlion/io/Writer.class
+com/vlion/io/AbstractWriter.class

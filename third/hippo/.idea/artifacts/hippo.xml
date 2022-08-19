@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="hippo">
+    <output-path>$PROJECT_DIR$/out/artifacts/hippo</output-path>
+    <root id="archive" name="hippo.jar" />
+  </artifact>
+</component>

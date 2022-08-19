@@ -1,0 +1,11 @@
+Desktop.ini
+.vscode
+__pycache__
+.DS_Store
+logs
+.idea
+.ipynb_checkpoints
+__MACOSX
+
+.git
+.gitignore

@@ -1,0 +1,2211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_4" version="4.4.1">
+    <Header copyright="Copyright (c) 2018 Software AG" description="Default Description">
+        <Application name="Nyoka" version="4.4.0"/>
+        <Timestamp>2021-05-14 16:45:44.877915</Timestamp>
+    </Header>
+    <DataDictionary numberOfFields="5">
+        <DataField name="x1" optype="continuous" dataType="double"/>
+        <DataField name="x2" optype="continuous" dataType="double"/>
+        <DataField name="x3" optype="continuous" dataType="double"/>
+        <DataField name="x4" optype="continuous" dataType="double"/>
+        <DataField name="class" optype="categorical" dataType="integer">
+            <Value value="1"/>
+            <Value value="2"/>
+        </DataField>
+    </DataDictionary>
+    <MiningModel modelName="XGBoostModel" functionName="classification">
+        <MiningSchema>
+            <MiningField name="x1" usageType="active" optype="continuous"/>
+            <MiningField name="x2" usageType="active" optype="continuous"/>
+            <MiningField name="x3" usageType="active" optype="continuous"/>
+            <MiningField name="x4" usageType="active" optype="continuous"/>
+            <MiningField name="class" usageType="target" optype="categorical"/>
+        </MiningSchema>
+        <Output>
+            <OutputField name="probability_1" optype="continuous" dataType="double" feature="probability" value="1"/>
+            <OutputField name="probability_2" optype="continuous" dataType="double" feature="probability" value="2"/>
+            <OutputField name="predicted_class" optype="categorical" dataType="integer" feature="predictedValue"/>
+        </Output>
+        <Segmentation multipleModelMethod="modelChain" missingThreshold="1">
+            <Segment id="1" weight="1">
+                <True/>
+                <MiningModel modelName="MiningModel" functionName="regression">
+                    <MiningSchema>
+                        <MiningField name="x1" usageType="active"/>
+                        <MiningField name="x2" usageType="active"/>
+                        <MiningField name="x3" usageType="active"/>
+                        <MiningField name="x4" usageType="active"/>
+                    </MiningSchema>
+                    <Output>
+                        <OutputField name="xgbValue" optype="continuous" dataType="float" feature="predictedValue"/>
+                    </Output>
+                    <Segmentation multipleModelMethod="sum" missingThreshold="1">
+                        <Segment id="1" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.7500000000000000"/>
+                                        <Node>
+                                            <SimplePredicate field="x3" operator="lessThan" value="5.0500001900000004"/>
+                                            <Node score="-0.150000006">
+                                                <SimplePredicate field="x1" operator="lessThan" value="5.1499996200000000"/>
+                                            </Node>
+                                            <Node score="-0.538461566">
+                                                <SimplePredicate field="x1" operator="greaterOrEqual" value="5.1499996200000000"/>
+                                            </Node>
+                                        </Node>
+                                        <Node score="0.150000006">
+                                            <SimplePredicate field="x3" operator="greaterOrEqual" value="5.0500001900000004"/>
+                                        </Node>
+                                    </Node>
+                                    <Node>
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.7500000000000000"/>
+                                        <Node score="0.150000006">
+                                            <SimplePredicate field="x1" operator="lessThan" value="5.9499998099999996"/>
+                                        </Node>
+                                        <Node score="0.53513515">
+                                            <SimplePredicate field="x1" operator="greaterOrEqual" value="5.9499998099999996"/>
+                                        </Node>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="2" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="lessThan" value="4.8500003800000000"/>
+                                        <Node score="-0.428988874">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.5499999499999999"/>
+                                        </Node>
+                                        <Node score="-0.0502520204">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.5499999499999999"/>
+                                        </Node>
+                                    </Node>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="4.8500003800000000"/>
+                                        <Node score="0.0138045456">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.7500000000000000"/>
+                                        </Node>
+                                        <Node score="0.430660427">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.7500000000000000"/>
+                                        </Node>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="3" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="lessThan" value="4.8500003800000000"/>
+                                        <Node score="-0.36619696">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.5499999499999999"/>
+                                        </Node>
+                                        <Node score="-0.0421268083">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.5499999499999999"/>
+                                        </Node>
+                                    </Node>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="4.8500003800000000"/>
+                                        <Node score="0.0113434792">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.7500000000000000"/>
+                                        </Node>
+                                        <Node score="0.367527187">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.7500000000000000"/>
+                                        </Node>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="4" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="lessThan" value="4.8500003800000000"/>
+                                        <Node score="-0.326035619">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.5499999499999999"/>
+                                        </Node>
+                                        <Node score="-0.0353330709">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.5499999499999999"/>
+                                        </Node>
+                                    </Node>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="4.8500003800000000"/>
+                                        <Node score="0.00932176318">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.7500000000000000"/>
+                                        </Node>
+                                        <Node score="0.327292591">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.7500000000000000"/>
+                                        </Node>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="5" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.0500001900000004"/>
+                                        <Node score="-0.31452018">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                        </Node>
+                                        <Node score="0.0924503952">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                        </Node>
+                                    </Node>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.0500001900000004"/>
+                                        <Node score="0.0877804682">
+                                            <SimplePredicate field="x2" operator="lessThan" value="2.7500000000000000"/>
+                                        </Node>
+                                        <Node score="0.30714941">
+                                            <SimplePredicate field="x2" operator="greaterOrEqual" value="2.7500000000000000"/>
+                                        </Node>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="6" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.0500001900000004"/>
+                                        <Node score="-0.288232952">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                        </Node>
+                                        <Node score="0.076758638">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                        </Node>
+                                    </Node>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.0500001900000004"/>
+                                        <Node score="0.07576783">
+                                            <SimplePredicate field="x2" operator="lessThan" value="2.7500000000000000"/>
+                                        </Node>
+                                        <Node score="0.280140877">
+                                            <SimplePredicate field="x2" operator="greaterOrEqual" value="2.7500000000000000"/>
+                                        </Node>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="7" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                        <Node score="-0.260215938">
+                                            <SimplePredicate field="x3" operator="lessThan" value="4.8500003800000000"/>
+                                        </Node>
+                                        <Node score="0.0301453061">
+                                            <SimplePredicate field="x3" operator="greaterOrEqual" value="4.8500003800000000"/>
+                                        </Node>
+                                    </Node>
+                                    <Node>
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                        <Node score="0.0637641475">
+                                            <SimplePredicate field="x3" operator="lessThan" value="5.0500001900000004"/>
+                                        </Node>
+                                        <Node score="0.249698475">
+                                            <SimplePredicate field="x3" operator="greaterOrEqual" value="5.0500001900000004"/>
+                                        </Node>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="8" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.0500001900000004"/>
+                                        <Node score="-0.24864307">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                        </Node>
+                                        <Node score="0.0529812649">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                        </Node>
+                                    </Node>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.0500001900000004"/>
+                                        <Node score="0.0663495064">
+                                            <SimplePredicate field="x3" operator="lessThan" value="5.3500003800000000"/>
+                                        </Node>
+                                        <Node score="0.243183345">
+                                            <SimplePredicate field="x3" operator="greaterOrEqual" value="5.3500003800000000"/>
+                                        </Node>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="9" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.1499996200000000"/>
+                                        <Node score="-0.227733418">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                        </Node>
+                                        <Node score="0.080734238">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                        </Node>
+                                    </Node>
+                                    <Node score="0.232568905">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.1499996200000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="10" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.0500001900000004"/>
+                                        <Node score="-0.212693334">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                        </Node>
+                                        <Node score="0.0303649809">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                        </Node>
+                                    </Node>
+                                    <Node score="0.178291932">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="11" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.1499996200000000"/>
+                                        <Node score="-0.195856467">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                        </Node>
+                                        <Node score="0.057410609">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                        </Node>
+                                    </Node>
+                                    <Node score="0.198955029">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.1499996200000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="12" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.0500001900000004"/>
+                                        <Node score="-0.181103557">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                        </Node>
+                                        <Node score="0.0154872071">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                        </Node>
+                                    </Node>
+                                    <Node score="0.146865755">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="13" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.1499996200000000"/>
+                                        <Node score="-0.168533534">
+                                            <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                        </Node>
+                                        <Node score="0.0414372198">
+                                            <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                        </Node>
+                                    </Node>
+                                    <Node score="0.170864388">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.1499996200000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="14" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.0500001900000004"/>
+                                        <Node score="0.0446822681">
+                                            <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                        </Node>
+                                        <Node score="-0.167164639">
+                                            <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                        </Node>
+                                    </Node>
+                                    <Node score="0.121967882">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="15" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0931507796">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.7500000000000000"/>
+                                    </Node>
+                                    <Node score="0.116950251">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.7500000000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="16" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0921498165">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0862365067">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="17" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node>
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.0500001900000004"/>
+                                        <Node score="0.0256793033">
+                                            <SimplePredicate field="x2" operator="lessThan" value="2.9500000499999999"/>
+                                        </Node>
+                                        <Node score="-0.145858496">
+                                            <SimplePredicate field="x2" operator="greaterOrEqual" value="2.9500000499999999"/>
+                                        </Node>
+                                    </Node>
+                                    <Node score="0.106759302">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="18" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0708712414">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.7500000000000000"/>
+                                    </Node>
+                                    <Node score="0.090581663">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.7500000000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="19" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.068015933">
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.092997238">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="20" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.078401655">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0728514791">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="21" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.076215215">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0766130462">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="22" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0573602058">
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0792016536">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="23" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0720624402">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0652134269">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="24" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0626871288">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0624333806">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="25" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0634061247">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0644376129">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="26" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0671488792">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0580879785">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="27" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0524077192">
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0691141933">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="28" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0571265705">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.05635361">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="29" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.065189749">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0558735356">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="30" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0552998371">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0557542443">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="31" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0531686731">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0537077822">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="32" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0607105196">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0507124178">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="33" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0461646393">
+                                        <SimplePredicate field="x3" operator="lessThan" value="5.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0592268519">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="5.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="34" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.044833675">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.7500000000000000"/>
+                                    </Node>
+                                    <Node score="0.0578467399">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.7500000000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="35" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0515943877">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.04974683">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="36" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0485949703">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0522626266">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="37" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0541879199">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0468326062">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="38" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0479178466">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0474924296">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="39" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0496812128">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0419204198">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="40" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0461630635">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0471219607">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="41" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0448813662">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0447330438">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="42" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0470803604">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.039217636">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="43" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0414871983">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0421329401">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="44" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0421654955">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0419870391">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="45" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0445445254">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0368774235">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="46" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0381434895">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0383848622">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="47" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0383001231">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0393108651">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="48" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0420402735">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0347436704">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="49" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.036238268">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0362288952">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="50" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0344472863">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0354375802">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="51" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.039682731">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.032805156">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="52" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0343956053">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0341329277">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="53" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0363516361">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0298450384">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="54" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0326826088">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0329507701">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="55" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0326657705">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0319655947">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="56" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.027926106">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.029062314">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="57" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0286568124">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0272606928">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="58" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0239297692">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0255918596">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="59" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0251101237">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0233149044">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="60" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.021613799">
+                                        <SimplePredicate field="x3" operator="lessThan" value="4.9499998099999996"/>
+                                    </Node>
+                                    <Node score="-0.0214768201">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="4.9499998099999996"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="61" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0223693941">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.024212582">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="62" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0220916755">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.020185899">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="63" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0191980042">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0212039426">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="64" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0219585169">
+                                        <SimplePredicate field="x3" operator="lessThan" value="4.9499998099999996"/>
+                                    </Node>
+                                    <Node score="-0.0217083078">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="4.9499998099999996"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="65" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.041320581">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0353392102">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="66" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0220243372">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0209312048">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="67" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0202165432">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0213819165">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="68" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0193746984">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0179244578">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="69" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0184882618">
+                                        <SimplePredicate field="x3" operator="lessThan" value="4.9499998099999996"/>
+                                    </Node>
+                                    <Node score="-0.0184669755">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="4.9499998099999996"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="70" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0379808769">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0324636921">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="71" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0323401056">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0270448681">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="72" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0220267661">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0220544077">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="73" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0219821408">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0210777819">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="74" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0187877771">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0194581021">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="75" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0192973539">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0179622844">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="76" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0160735995">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0171248335">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="77" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0175839011">
+                                        <SimplePredicate field="x3" operator="lessThan" value="4.9499998099999996"/>
+                                    </Node>
+                                    <Node score="-0.017503554">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="4.9499998099999996"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="78" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0169397257">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.015417859">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="79" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0152074331">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0164489839">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="80" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0162035152">
+                                        <SimplePredicate field="x3" operator="lessThan" value="4.9499998099999996"/>
+                                    </Node>
+                                    <Node score="-0.0159216654">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="4.9499998099999996"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="81" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0327963419">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0284427665">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="82" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0170804095">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0159802046">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="83" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0291675851">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0250423048">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="84" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0172992833">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0175275262">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="85" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0170999635">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.01598108">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="86" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0147532644">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0154137658">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="87" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0149969757">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0136362296">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="88" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0138104735">
+                                        <SimplePredicate field="x3" operator="lessThan" value="4.9499998099999996"/>
+                                    </Node>
+                                    <Node score="-0.0135799078">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="4.9499998099999996"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="89" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0137238391">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0146166068">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="90" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0127737541">
+                                        <SimplePredicate field="x3" operator="lessThan" value="4.9499998099999996"/>
+                                    </Node>
+                                    <Node score="-0.0125159407">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="4.9499998099999996"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="91" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0276534986">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0241516102">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="92" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0150959156">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0140003301">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="93" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.024627164">
+                                        <SimplePredicate field="x4" operator="lessThan" value="1.6500001000000000"/>
+                                    </Node>
+                                    <Node score="0.0213372782">
+                                        <SimplePredicate field="x4" operator="greaterOrEqual" value="1.6500001000000000"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="94" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0153189721">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.015478814">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="95" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.015053153">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0139157614">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="96" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0130520528">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0135884313">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="97" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0131898867">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0118691139">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="98" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="-0.0111500844">
+                                        <SimplePredicate field="x1" operator="lessThan" value="6.0500001900000004"/>
+                                    </Node>
+                                    <Node score="0.0119007556">
+                                        <SimplePredicate field="x1" operator="greaterOrEqual" value="6.0500001900000004"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="99" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.0119638843">
+                                        <SimplePredicate field="x3" operator="lessThan" value="4.9499998099999996"/>
+                                    </Node>
+                                    <Node score="-0.01165039">
+                                        <SimplePredicate field="x3" operator="greaterOrEqual" value="4.9499998099999996"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                        <Segment id="100" weight="1">
+                            <True/>
+                            <TreeModel modelName="DecisionTreeModel" functionName="regression" missingValuePenalty="1.0" noTrueChildStrategy="returnLastPrediction">
+                                <MiningSchema>
+                                    <MiningField name="x1" usageType="active"/>
+                                    <MiningField name="x2" usageType="active"/>
+                                    <MiningField name="x3" usageType="active"/>
+                                    <MiningField name="x4" usageType="active"/>
+                                </MiningSchema>
+                                <Node>
+                                    <True/>
+                                    <Node score="0.011531096">
+                                        <SimplePredicate field="x2" operator="lessThan" value="2.8499998999999998"/>
+                                    </Node>
+                                    <Node score="-0.0101735163">
+                                        <SimplePredicate field="x2" operator="greaterOrEqual" value="2.8499998999999998"/>
+                                    </Node>
+                                </Node>
+                            </TreeModel>
+                        </Segment>
+                    </Segmentation>
+                </MiningModel>
+            </Segment>
+            <Segment id="2" weight="1">
+                <True/>
+                <RegressionModel modelName="XGBClassifier" functionName="classification" normalizationMethod="logit">
+                    <MiningSchema>
+                        <MiningField name="xgbValue" usageType="active" optype="continuous"/>
+                        <MiningField name="class" usageType="target" optype="categorical"/>
+                    </MiningSchema>
+                    <Output>
+                        <OutputField name="probability_1" optype="continuous" dataType="double" feature="probability" value="1"/>
+                        <OutputField name="probability_2" optype="continuous" dataType="double" feature="probability" value="2"/>
+                        <OutputField name="predicted_class" optype="categorical" dataType="integer" feature="predictedValue"/>
+                    </Output>
+                    <RegressionTable intercept="0.0" targetCategory="2">
+                        <NumericPredictor name="xgbValue" exponent="1" coefficient="1.0"/>
+                    </RegressionTable>
+                    <RegressionTable intercept="0.0" targetCategory="1"/>
+                </RegressionModel>
+            </Segment>
+        </Segmentation>
+    </MiningModel>
+</PMML>

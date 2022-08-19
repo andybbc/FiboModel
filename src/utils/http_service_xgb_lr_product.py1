@@ -1,0 +1,192 @@
+from flask import Flask,request
+import json
+import gflags
+import sys
+sys.path.append("..")
+sys.path.append("../..")
+
+from train import xgboost_lr_rtb as xgboost_lr_train
+from predict import xgboost_lr_rtb as xgboost_lr_predict
+from utils import logs
+
+
+app = Flask(__name__)
+
+Flags = gflags.FLAGS
+gflags.DEFINE_string('log_path', '../../logs/xgboost_lr.log', 'log')
+
+# 采用哪种训练方法
+gflags.DEFINE_string('use_model_type', "xgboost", '训练的模型方式')  # xgbgoot, xgboost_lr, xgboost_lr2
+
+# 训练还是预测
+gflags.DEFINE_string('run_type', "predict_one", '是训练还是预测')
+# gflags.DEFINE_string('run_type', "train", '是否训练,True为训练,False为预测')
+
+
+# 各种文件路径
+gflags.DEFINE_string('origin_path', '../../data/demo/xgboost_lr/train_subset_300000.csv', '原始文件')
+gflags.DEFINE_string('stg_file_path', '../../data/demo/xgboost_lr/train_subset_300000_encode.csv', '转换后的label_encode文件')
+gflags.DEFINE_string('out_label_path', "../../data/demo/xgboost_lr/label.out", '字段映射')  # 通过序列化来做
+gflags.DEFINE_string('predict_input_file_path', "../../data/demo/xgboost_lr/predict/predict_input_file.csv", '预估文件')
+gflags.DEFINE_string('predict_output_file_path', "../../data/demo/xgboost_lr/predict/predict_output_file.csv", '预估文件')
+
+# 拆分文件
+gflags.DEFINE_string('train_file_path', "../../data/demo/xgboost_lr/train_subset_300000_encode_train.csv", 'train_file_path')
+gflags.DEFINE_string('vali_file_path', "../../data/demo/xgboost_lr/train_subset_300000_encode_vali.csv", 'vali_file_path')
+gflags.DEFINE_string('test_file_path', "../../data/demo/xgboost_lr/train_subset_300000_encode_test.csv", 'test_file_path')
+
+# 保存的model文件
+gflags.DEFINE_string('xgb_model_path', "../../data/demo/xgboost_lr/xgb_model.pkl", 'xgb_model_path')
+gflags.DEFINE_string('lr_model_path', "../../data/demo/xgboost_lr/lr_model.pkl", 'lr_model_path')
+gflags.DEFINE_string('lr_model_path2', "../../data/demo/xgboost_lr/lr_model2.pkl", 'lr_model_path2')
+
+# 各种字段
+gflags.DEFINE_string('need_label_encode_cols', "site_id,site_domain,site_category,app_id,app_domain,app_category,device_id,device_ip,device_model", '转换后的label_encode文件')
+gflags.DEFINE_string('all_cols', 'id,click,hour,C1,banner_pos,site_id,site_domain,site_category,app_id,app_domain,app_category,device_id,device_ip,device_model,device_type,device_conn_type,C14,C15,C16,C17,C18,C19,C20,C21', '原有文件所有字段')
+gflags.DEFINE_string('useful_cols', "banner_pos,device_type,device_conn_type,C1,C14,C15,C16,C17,C18,C19,C20,C21,site_id,site_domain,site_category,app_id,app_domain,app_category,device_id,device_ip,device_model", '有效的特征字段,自定义')  #
+gflags.DEFINE_string('target_col', "click", 'target_col')
+gflags.DEFINE_string('file_separator', "#", '文件分隔符')
+
+
+dic_config = {}
+
+gflags.FLAGS(sys.argv)
+logger = logs.Logger(log_path=Flags.log_path).logger
+
+
+def init():
+    global dic_config
+    global logger
+    dic_config['logger'] = logger
+    run_type = Flags.run_type
+    logger.info(f"=========================开始:{run_type}=========================")
+
+    # 训练数据,生成model文件,只需要train_path
+    if run_type == "train":
+        # 输入文件
+        dic_config["origin_path"] = Flags.origin_path
+        dic_config["stg_file_path"] = Flags.stg_file_path  # 原始文件label_encode后的文件
+        dic_config["out_label_path"] = Flags.out_label_path  # map,转换列的数据,label_encode
+
+        # 字段相关
+        dic_config['all_cols'] = Flags.all_cols.split(",")  # 所有字段
+        dic_config["need_label_encode_cols"] = Flags.need_label_encode_cols.split(",")  # 需要被label_encode的字段
+        dic_config["useful_cols"] = Flags.useful_cols.split(",")  # 有效的特征字段,自定义
+        dic_config["target_col"] = Flags.target_col  # click字段
+        dic_config["file_separator"] = Flags.file_separator  # click字段
+
+        dic_config["train_file_path"] = Flags.train_file_path  # 拆分后训练的数据
+        dic_config["vali_file_path"] = Flags.vali_file_path  # 拆分后
+        dic_config["test_file_path"] = Flags.test_file_path  # 拆分后
+
+        dic_config["xgb_model_path"] = Flags.xgb_model_path  # 模型文件
+        dic_config["lr_model_path"] = Flags.lr_model_path  # 模型文件
+        dic_config["lr_model_path2"] = Flags.lr_model_path2  # 模型文件
+
+
+    elif run_type == "predict_one":
+
+        # dic_config["origin_path"] = Flags.origin_path
+        # dic_config["stg_file_path"] = Flags.stg_file_path
+        dic_config["out_label_path"] = Flags.out_label_path
+
+        # 字段相关
+        dic_config['all_cols'] = Flags.all_cols.split(",")
+        dic_config["need_label_encode_cols"] = Flags.need_label_encode_cols.split(",")  # list
+        dic_config["useful_cols"] = Flags.useful_cols.split(",")  # list
+        dic_config["target_col"] = Flags.target_col
+        dic_config["file_separator"] = Flags.file_separator  # click字段
+
+        # dic_config["train_file_path"] = Flags.train_file_path
+        # dic_config["vali_file_path"] = Flags.vali_file_path
+        # dic_config["test_file_path"] = Flags.test_file_path
+
+        dic_config["xgb_model_path"] = Flags.xgb_model_path
+        dic_config["lr_model_path"] = Flags.lr_model_path
+        dic_config["lr_model_path2"] = Flags.lr_model_path2
+
+    elif run_type == "predict_batch":
+
+        dic_config["predict_input_file_path"] = Flags.predict_input_file_path  # 需要被预估的原始文件的路径,列只包括click往后的字段
+        dic_config['predict_output_file_path'] = Flags.predict_output_file_path
+
+        # dic_config["origin_path"] = Flags.origin_path
+        # dic_config["stg_file_path"] = Flags.stg_file_path
+        dic_config["out_label_path"] = Flags.out_label_path  # map,映射,置换字段
+        dic_config["file_separator"] = Flags.file_separator  # click字段
+
+        # 字段相关
+        dic_config['all_cols'] = Flags.all_cols.split(",")
+        dic_config["need_label_encode_cols"] = Flags.need_label_encode_cols.split(",")  # list
+        dic_config["useful_cols"] = Flags.useful_cols.split(",")  # list
+        dic_config["target_col"] = Flags.target_col
+
+        # dic_config["train_file_path"] = Flags.train_file_path
+        # dic_config["vali_file_path"] = Flags.vali_file_path
+        # dic_config["test_file_path"] = Flags.test_file_path
+
+        dic_config["xgb_model_path"] = Flags.xgb_model_path
+        dic_config["lr_model_path"] = Flags.lr_model_path
+        dic_config["lr_model_path2"] = Flags.lr_model_path2
+
+        # 预测数据,需要model文件和测试文件
+        pass
+    else:
+        logger.error("不支持的类型")
+
+
+init()
+
+xgb_lr_predict = xgboost_lr_predict.XgbLRPredict(dic_config)
+
+
+
+
+@app.route("/test_1.0",methods=["POST"])
+def login():
+    # 默认返回内容
+    return_request = {'code':'200','return_msg':'处理成功','result':False}
+    # 判断请求参数是否为空
+    if request.get_data() is None:
+        return_request['code'] = '10001'
+        return_request['return_msg'] = '请求参数为空'
+        return json.dumps(return_request,ensure_ascii=False)
+    # 请求参数不为空，获取入参，并对参数进行处理
+    get_Data = request.get_data()
+    # 传入的参数为bytes类型，需要转化成json
+    get_Data = json.loads(get_Data)
+    #操作参数
+    name = get_Data.get('name')
+    age = get_Data.get('age')
+    return_request['result'] = tt(name,age)
+    return json.dumps(return_request,ensure_ascii=False)
+
+
+def tt(name,age):
+    result = "%s的年龄是%s"%(name,age)
+    return result
+
+@app.route("/query_predict",methods=["POST"])
+def query():
+    # 默认返回内容
+    return_request = {'code':'200','return_msg':'处理成功','result':False}
+    # 判断请求参数是否为空
+    if request.get_data() is None:
+        return_request['code'] = '10001'
+        return_request['return_msg'] = '请求参数为空'
+        return json.dumps(return_request,ensure_ascii=False)
+    # 请求参数不为空，获取入参，并对参数进行处理
+    get_Data = request.get_data()
+    # 传入的参数为bytes类型，需要转化成json
+    get_Data = json.loads(get_Data)
+    #操作参数
+    line = get_Data.get('queryStr')
+    result = xgb_lr_predict.predict_one_xgb(line).tolist()
+
+    return_request['result'] = result
+    return json.dumps(return_request,ensure_ascii=False)
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
